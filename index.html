@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecteur de Musique</title>
+    <style>
+        body {
+            background-color: #E6FF99;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background: #E6FF99;
+            padding: 20px;
+            text-align: center;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+        .header {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .date-selector {
+            background: #D4FF4D;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .album-art {
+            width: 300px;
+            height: 300px;
+            background: brown;
+            margin: 0 auto 20px auto;
+            border-radius: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        button {
+            background: none;
+            border: none;
+            font-size: 30px; /* Increased font size */
+            cursor: pointer;
+        }
+        #seek-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 10px; /* Increased height */
+            margin-top: 10px;
+        }
+        #date-picker {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="icon.png" alt="Logo" width="50">
+            <div class="date-selector" id="date-selector">
+                <span>&#128197;</span>
+                <span id="selected-date">Date sélectionnée</span>
+            </div>
+            <input type="date" id="date-picker">
+        </div>
+        <div class="album-art"></div>
+        <p>Presse citron</p>
+        <input type="range" id="seek-bar" min="0" max="100" value="0">
+        <audio id="audio" src="music.mp3"></audio>
+        <div class="controls">
+            <button id="prev">&#9198;</button>
+            <button id="play-pause">&#9658;</button>
+            <button id="next">&#9197;</button>
+        </div>
+    </div>
+    <script>
+        const audio = document.getElementById("audio");
+        const playPauseButton = document.getElementById("play-pause");
+        const seekBar = document.getElementById("seek-bar");
+        const dateSelector = document.getElementById("date-selector");
+        const datePicker = document.getElementById("date-picker");
+        const selectedDate = document.getElementById("selected-date");
+        const musicName = document.querySelector("p");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+
+        playPauseButton.addEventListener("click", () => {
+            if (audio.paused) {
+                audio.play();
+                playPauseButton.innerHTML = "&#9208;";
+            } else {
+                audio.pause();
+                playPauseButton.innerHTML = "&#9658;";
+            }
+        });
+
+        audio.addEventListener("timeupdate", () => {
+            seekBar.value = (audio.currentTime / audio.duration) * 100;
+        });
+
+        seekBar.addEventListener("input", () => {
+            audio.currentTime = (seekBar.value / 100) * audio.duration;
+        });
+
+        dateSelector.addEventListener("click", () => {
+            datePicker.showPicker();
+        });
+
+        datePicker.addEventListener("change", () => {
+            updateAudioSource(new Date(datePicker.value));
+        });
+
+        prevButton.addEventListener("click", () => {
+            const currentDate = new Date(datePicker.value);
+            currentDate.setDate(currentDate.getDate() - 1);
+            updateAudioSource(currentDate);
+        });
+
+        nextButton.addEventListener("click", () => {
+            const currentDate = new Date(datePicker.value);
+            currentDate.setDate(currentDate.getDate() + 1);
+            updateAudioSource(currentDate);
+        });
+
+        function updateAudioSource(date) {
+            const formattedDate = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            selectedDate.textContent = formattedDate;
+            datePicker.value = date.toISOString().split('T')[0];
+
+            // Send GET request and update audio source
+            fetch(`${formattedDate}.mp4`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    audio.src = url;
+                    audio.load(); // Load the new audio source
+                    musicName.textContent = "Presse citron";
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    musicName.textContent = "Non dispo :(";
+                });
+        }
+    </script>
+</body>
+</html>
