@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecteur de Musique</title>
+    <title>Radio citron</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="favicon-32x32.png" sizes="32x32" type="image/png">
     <style>
         body {
             background-color: #E6FF99;
@@ -13,6 +15,8 @@
             justify-content: center;
             height: 100vh;
             font-family: Arial, sans-serif;
+            margin: 0;
+            overflow-x: hidden; /* Disallow horizontal scrolling */
         }
         .container {
             background: #E6FF99;
@@ -21,17 +25,18 @@
             border-radius: 20px;
             width: 100%;
             max-width: 400px;
-            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px; /* Increased margin to add more space */
             position: fixed;
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
         .date-selector {
             background: #D4FF4D;
@@ -42,34 +47,88 @@
             gap: 10px;
             cursor: pointer;
             margin-top: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Increased shadow */
+            border: 2px solid #B3E044; /* Added stroke */
         }
         .album-art {
             width: 300px;
             height: 300px;
-            background: brown;
+            background: url('lemon.jpg') center center / cover no-repeat;
             margin: 0 auto 20px auto;
             border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .controls {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 20px;
+            margin-top: 20px;
         }
         button {
-            background: none;
+            background: #D4FF4D;
             border: none;
             font-size: 30px; /* Increased font size */
             cursor: pointer;
+            color: #333;
+            padding: 10px;
+            border-radius: 50%;
+            transition: background 0.3s, color 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 60px; /* Fixed width */
+            height: 60px; /* Fixed height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button:active {
+            background: #D4FF4D; /* Disable changing color on click */
+            color: #333; /* Disable changing color on click */
+        }
+        button:hover {
+            background: #B3E044;
+            color: #000;
         }
         #seek-bar {
             width: 100%;
             max-width: 400px;
             height: 10px; /* Increased height */
             margin-top: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        #seek-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #D4FF4D;
+            border: 2px solid #333; /* Added stroke */
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #seek-bar::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #D4FF4D;
+            border: 2px solid #333; /* Added stroke */
+            border-radius: 50%;
+            cursor: pointer;
         }
         #date-picker {
             display: none;
+        }
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
         }
     </style>
 </head>
@@ -79,18 +138,22 @@
             <img src="icon.png" alt="Logo" width="50">
             <div class="date-selector" id="date-selector">
                 <span>&#128197;</span>
-                <span id="selected-date">Date sélectionnée</span>
+                <span id="selected-date">Date</span>
             </div>
             <input type="date" id="date-picker">
         </div>
         <div class="album-art"></div>
         <p>Presse citron</p>
         <input type="range" id="seek-bar" min="0" max="100" value="0">
-        <audio id="audio" src="music.mp3"></audio>
+        <div class="time-display">
+            <span id="elapsed-time">00:00</span>
+            <span id="total-time">00:00</span>
+        </div>
+        <audio id="audio" src=""></audio>
         <div class="controls">
-            <button id="prev">&#9198;</button>
-            <button id="play-pause">&#9658;</button>
-            <button id="next">&#9197;</button>
+            <button id="prev"><i class="fas fa-backward"></i></button>
+            <button id="play-pause"><i class="fas fa-play"></i></button>
+            <button id="next"><i class="fas fa-forward"></i></button>
         </div>
     </div>
     <script>
@@ -103,19 +166,26 @@
         const musicName = document.querySelector("p");
         const prevButton = document.getElementById("prev");
         const nextButton = document.getElementById("next");
+        const elapsedTime = document.getElementById("elapsed-time");
+        const totalTime = document.getElementById("total-time");
 
         playPauseButton.addEventListener("click", () => {
             if (audio.paused) {
                 audio.play();
-                playPauseButton.innerHTML = "&#9208;";
+                playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
             } else {
                 audio.pause();
-                playPauseButton.innerHTML = "&#9658;";
+                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
             }
         });
 
         audio.addEventListener("timeupdate", () => {
             seekBar.value = (audio.currentTime / audio.duration) * 100;
+            elapsedTime.textContent = formatTime(audio.currentTime);
+        });
+
+        audio.addEventListener("loadedmetadata", () => {
+            totalTime.textContent = formatTime(audio.duration);
         });
 
         seekBar.addEventListener("input", () => {
@@ -148,7 +218,7 @@
             datePicker.value = date.toISOString().split('T')[0];
 
             // Send GET request and update audio source
-            fetch(`${formattedDate}.mp4`)
+            fetch(`${formattedDate}.mp3`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -160,12 +230,28 @@
                     audio.src = url;
                     audio.load(); // Load the new audio source
                     musicName.textContent = "Presse citron";
+                    audio.pause();
+                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+                    seekBar.value = 0; // Reset the seek bar
+                    elapsedTime.textContent = "00:00"; // Reset elapsed time
+                    totalTime.textContent = "00:00"; // Reset total time
                 })
                 .catch(error => {
                     console.error('There has been a problem with your fetch operation:', error);
                     musicName.textContent = "Non dispo :(";
                 });
         }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        // Set the default date to today's date and fetch the audio
+        const today = new Date();
+        datePicker.value = today.toISOString().split('T')[0];
+        updateAudioSource(today);
     </script>
 </body>
 </html>

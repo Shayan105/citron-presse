@@ -3,6 +3,7 @@ import socketserver
 import os
 import json
 import html
+import re
 
 baseFilePath = "index.html"
 
@@ -27,6 +28,15 @@ class Serv(BaseHTTPRequestHandler):
             self.path = '/' + baseFilePath
 
         elif self.path == "/icon.png":
+            self.send_File_content("icon.png", IMAGE_HEADER_TAG, hasHeader=False)
+        elif self.path == "/song.mp3":
+            self.send_File_content("song.mp3", SONG_HEADER_TAG, hasHeader=False)
+        elif re.match(r'/\d{2}-\d{2}-\d{4}\.mp3$', self.path):
+            self.send_File_content(self.path[1:], parsed[0], hasHeader=False)
+        elif self.path == "/lemon.jpg":
+            self.send_File_content("lemon.jpg", IMAGE_HEADER_TAG, hasHeader=False)
+        elif self.path == "/favicon-32x32.png":
+            self.send_File_content("favicon-32x32.png", IMAGE_HEADER_TAG, hasHeader=False)
 
 
 

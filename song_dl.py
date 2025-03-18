@@ -8,13 +8,16 @@ from datetime import datetime
 import threading
 import schedule
 import time
+import os
+import subprocess
 
 # Generate the output file name with the current date
 current_date = datetime.now().strftime("%d-%m-%Y")
 OUTPUT_FILE_NAME = f"{current_date}.wav"  # file name.
+MP3_FILE_NAME = f"{current_date}.mp3"  # MP3 file name.
 SAMPLE_RATE = 48000  # [Hz]. sampling rate.
 
-DURATION = 7*60+35
+DURATION = 35
 DELTA = 5
 
 def record_audio():
@@ -24,6 +27,12 @@ def record_audio():
         
         # change "data=data[:, 0]" to "data=data", if you would like to write audio as multiple-channels.
         sf.write(file=OUTPUT_FILE_NAME, data=data[:, 0], samplerate=SAMPLE_RATE)
+
+    # Convert WAV to MP3 using ffmpeg
+    subprocess.run(['ffmpeg', '-i', OUTPUT_FILE_NAME, MP3_FILE_NAME])
+
+    # Delete the WAV file
+    os.remove(OUTPUT_FILE_NAME)
 
 def run_script():
     # Initialize the WebDriver
@@ -43,13 +52,13 @@ def run_script():
     # Wait for the audio recording to finish
     audio_thread.join()
 
-# Schedule the script to run every day at 11:58 AM except on Saturdays and Sundays
+# Schedule the script to run every day at 17:34 and 17:37 except on Saturdays and Sundays
 def job():
     if datetime.now().weekday() < 5:  # Monday to Friday are 0-4
         run_script()
 
-schedule.every().day.at("11:48").do(job)
-
+schedule.every().day.at("17:34").do(job)
+schedule.every().day.at("17:59").do(job)
 
 while True:
     schedule.run_pending()
