@@ -217,8 +217,9 @@
             selectedDate.textContent = formattedDate;
             datePicker.value = date.toISOString().split('T')[0];
 
-            // Send GET request and update audio source
-            fetch(`${formattedDate}.mp3`)
+            // Send GET request and update audio source with cache-busting
+            const cacheBuster = new Date().getTime();
+            fetch(`${formattedDate}.mp3?cb=${cacheBuster}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
