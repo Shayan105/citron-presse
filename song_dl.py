@@ -17,7 +17,7 @@ OUTPUT_FILE_NAME = f"{current_date}.wav"  # file name.
 MP3_FILE_NAME = f"{current_date}.mp3"  # MP3 file name.
 SAMPLE_RATE = 48000  # [Hz]. sampling rate.
 
-DURATION = 14
+DURATION = 5*60
 DELTA = 5
 
 def record_audio():
@@ -59,8 +59,8 @@ def job():
     if datetime.now().weekday() < 5:  # Monday to Friday are 0-4
         run_script()
 
-schedule.every().day.at("17:33").do(job)
-schedule.every().day.at("17:34").do(job)
+schedule.every().day.at("11:49").do(job)
+
 
 
 while True:
