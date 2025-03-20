@@ -12,7 +12,7 @@ IMAGE_HEADER_TAG = "image/jpeg"
 SONG_HEADER_TAG = "audio/mpeg"
 JSON_HEADER_TAG = "application/json"
 
-
+BASE = "C:/Users/B/Documents/GitHub/citron-presse/"
 
 
 
@@ -28,23 +28,23 @@ class Serv(BaseHTTPRequestHandler):
             self.path = '/' + baseFilePath
 
         elif self.path == "/icon.png":
-            self.send_File_content("icon.png", IMAGE_HEADER_TAG, hasHeader=False)
+            self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/icon.png", IMAGE_HEADER_TAG, hasHeader=False)
         elif self.path == "/song.mp3":
-            self.send_File_content("song.mp3", SONG_HEADER_TAG, hasHeader=False)
+            self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/song.mp3", SONG_HEADER_TAG, hasHeader=False)
         elif re.match(r'/\d{2}-\d{2}-\d{4}\.mp3$', self.path):
-            self.send_File_content(self.path[1:], parsed[0], hasHeader=False)
+            self.send_File_content(BASE + self.path[1:], parsed[0], hasHeader=False)
         elif self.path == "/lemon.jpg":
-            self.send_File_content("lemon.jpg", IMAGE_HEADER_TAG, hasHeader=False)
+            self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/lemon.jpg", IMAGE_HEADER_TAG, hasHeader=False)
         elif self.path == "/favicon-32x32.png":
-            self.send_File_content("favicon-32x32.png", IMAGE_HEADER_TAG, hasHeader=False)
+            self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/favicon-32x32.png", IMAGE_HEADER_TAG, hasHeader=False)
 
 
 
         try:
-            file_to_open = open(self.path[1:]).read()
+            file_to_open = open("C:/Users/B/Documents/GitHub/citron-presse/index.html").read()
             self.send_response(200)
         except:
-            file_to_open = "File not found"
+            file_to_open = "File not found :&"
             self.send_response(404)
         self.end_headers()
         self.wfile.write(bytes(file_to_open, 'utf-8'))
