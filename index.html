@@ -130,6 +130,23 @@
             font-size: 14px;
             color: #333;
         }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #333;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -152,10 +169,13 @@
         <audio id="audio" src=""></audio>
         <div class="controls">
             <button id="prev"><i class="fas fa-backward"></i></button>
-            <button id="play-pause"><i class="fas fa-play"></i></button>
+            <div style="position: relative;">
+                <button id="play-pause"><i class="fas fa-play"></i></button>
+            </div>
             <button id="next"><i class="fas fa-forward"></i></button>
         </div>
     </div>
+    <div class="loading-spinner" id="loading-spinner"></div>
     <script>
         const audio = document.getElementById("audio");
         const playPauseButton = document.getElementById("play-pause");
@@ -168,6 +188,7 @@
         const nextButton = document.getElementById("next");
         const elapsedTime = document.getElementById("elapsed-time");
         const totalTime = document.getElementById("total-time");
+        const loadingSpinner = document.getElementById("loading-spinner");
 
         playPauseButton.addEventListener("click", () => {
             if (audio.paused) {
@@ -217,6 +238,12 @@
             selectedDate.textContent = formattedDate;
             datePicker.value = date.toISOString().split('T')[0];
 
+            // Show loading spinner and update time codes
+            loadingSpinner.style.display = 'block';
+            playPauseButton.style.display = 'none';
+            elapsedTime.textContent = "-";
+            totalTime.textContent = "-";
+
             // Send GET request and update audio source with cache-busting
             const cacheBuster = new Date().getTime();
             fetch(`${formattedDate}.mp3?cb=${cacheBuster}`)
@@ -231,15 +258,28 @@
                     audio.src = url;
                     audio.load(); // Load the new audio source
                     musicName.textContent = "Presse citron";
-                    audio.pause();
-                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                     seekBar.value = 0; // Reset the seek bar
                     elapsedTime.textContent = "00:00"; // Reset elapsed time
                     totalTime.textContent = "00:00"; // Reset total time
+
+                    // Update the time codes and seek bar after the audio metadata is loaded
+                    audio.addEventListener("loadedmetadata", () => {
+                        totalTime.textContent = formatTime(audio.duration);
+                        seekBar.value = 0;
+                        elapsedTime.textContent = "00:00";
+                        audio.play(); // Start the new song automatically
+                        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+                        // Hide loading spinner
+                        loadingSpinner.style.display = 'none';
+                        playPauseButton.style.display = 'flex';
+                    });
                 })
                 .catch(error => {
                     console.error('There has been a problem with your fetch operation:', error);
                     musicName.textContent = "Non dispo :(";
+                    // Hide loading spinner
+                    loadingSpinner.style.display = 'none';
+                    playPauseButton.style.display = 'flex';
                 });
         }
 

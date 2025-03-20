@@ -31,8 +31,8 @@ class Serv(BaseHTTPRequestHandler):
             self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/icon.png", IMAGE_HEADER_TAG, hasHeader=False)
         elif self.path == "/song.mp3":
             self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/song.mp3", SONG_HEADER_TAG, hasHeader=False)
-        elif re.match(r'/\d{2}-\d{2}-\d{4}\.mp3$', self.path):
-            self.send_File_content(BASE + self.path[1:], parsed[0], hasHeader=False)
+        elif re.match(r'/\d{2}-\d{2}-\d{4}\.mp3$', self.path.split("?")[0]):
+            self.send_File_content(BASE + self.path.split('?')[0][1:], SONG_HEADER_TAG, hasHeader=False)
         elif self.path == "/lemon.jpg":
             self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/lemon.jpg", IMAGE_HEADER_TAG, hasHeader=False)
         elif self.path == "/favicon-32x32.png":
@@ -59,6 +59,7 @@ class Serv(BaseHTTPRequestHandler):
 
 
     def send_File_content(self, filePath: str, contentType: str, chunk_size=8192, hasHeader = True ):
+        print("Filepath: ", filePath)
         try:
             with open(filePath, "rb") as file:
                 self.send_response(200)

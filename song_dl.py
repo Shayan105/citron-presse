@@ -59,7 +59,8 @@ def job():
     if datetime.now().weekday() < 5:  # Monday to Friday are 0-4
         run_script()
 
-schedule.every().day.at("16:14").do(job)
+schedule.every().day.at("17:33").do(job)
+schedule.every().day.at("17:34").do(job)
 
 
 while True:
