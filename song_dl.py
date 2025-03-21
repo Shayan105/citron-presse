@@ -27,6 +27,8 @@ def record_audio():
         current_date = datetime.now().strftime("%d-%m-%Y")
         OUTPUT_FILE_NAME = f"{current_date}.wav"  # file name.
         # change "data=data[:, 0]" to "data=data", if you would like to write audio as multiple-channels.
+        MP3_FILE_NAME = f"{current_date}.mp3"  # MP3 file name.
+
         sf.write(file=OUTPUT_FILE_NAME, data=data[:, 0], samplerate=SAMPLE_RATE)
 
     # Convert WAV to MP3 using ffmpeg
