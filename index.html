@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32x32.png" sizes="32x32" type="image/png">
     <style>
         body {
-            background-color: #E6FF99;
+            background-color: #F5FFE1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -19,7 +19,7 @@
             overflow-x: hidden; /* Disallow horizontal scrolling */
         }
         .container {
-            background: #E6FF99;
+            background: #2A2B29;
             padding: 20px;
             text-align: center;
             border-radius: 20px;
@@ -31,7 +31,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 40px; /* Increased margin to add more space */
+            margin-bottom: 50cm; /* Increased margin to add more space */
             position: fixed;
             top: 10px;
             left: 50%;
@@ -46,7 +46,7 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 5px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Increased shadow */
             border: 2px solid #B3E044; /* Added stroke */
         }
@@ -128,7 +128,7 @@
             max-width: 400px;
             margin-top: 10px;
             font-size: 14px;
-            color: #333;
+            color: #fcd4d4;
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
@@ -148,19 +148,27 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+
+<div class="header">
+    <img src="icon.png" alt="Logo" width="50">
+    <div class="date-selector" id="date-selector">
+        <span>&#128197;</span>
+        <span id="selected-date">Date</span>
+    </div>
+    <input type="date" id="date-picker">
+<br>
+</div>
+
 </head>
 <body>
+
+
+
     <div class="container">
-        <div class="header">
-            <img src="icon.png" alt="Logo" width="50">
-            <div class="date-selector" id="date-selector">
-                <span>&#128197;</span>
-                <span id="selected-date">Date</span>
-            </div>
-            <input type="date" id="date-picker">
-        </div>
+
         <div class="album-art"></div>
-        <p>Presse citron</p>
+        <p style="color:white;">Presse citron</p>
+
         <input type="range" id="seek-bar" min="0" max="100" value="0">
         <div class="time-display">
             <span id="elapsed-time">00:00</span>
@@ -267,8 +275,8 @@
                         totalTime.textContent = formatTime(audio.duration);
                         seekBar.value = 0;
                         elapsedTime.textContent = "00:00";
-                        audio.play(); // Start the new song automatically
-                        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+                    
+                        playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                         // Hide loading spinner
                         loadingSpinner.style.display = 'none';
                         playPauseButton.style.display = 'flex';
