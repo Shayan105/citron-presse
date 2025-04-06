@@ -276,7 +276,7 @@
                         seekBar.value = 0;
                         elapsedTime.textContent = "00:00";
                     
-                        playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+                        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
                         // Hide loading spinner
                         loadingSpinner.style.display = 'none';
                         playPauseButton.style.display = 'flex';
@@ -302,5 +302,77 @@
         datePicker.value = today.toISOString().split('T')[0];
         updateAudioSource(today);
     </script>
+
+<style>
+    .raindrop {
+        position: fixed;
+        top: -2em;
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.1);
+        animation: fall linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes fall {
+        to {
+            transform: translateY(100vh);
+        }
+    }
+</style>
+
+<script>
+const lemonImage = new Image();
+
+// Check if the image is already in localStorage
+let cachedImage = localStorage.getItem('cachedLemonImage');
+
+if (!cachedImage) {
+    // If not cached, load the image and store it in localStorage
+    lemonImage.src = 'tinyLemon.png'; // Path to your image
+    lemonImage.onload = () => {
+        console.log('Image loaded and cached');
+        
+        // Convert image to Base64 after it's loaded
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = lemonImage.width;
+        canvas.height = lemonImage.height;
+        ctx.drawImage(lemonImage, 0, 0);
+
+        // Save the image as Base64 to localStorage
+        cachedImage = canvas.toDataURL();
+        localStorage.setItem('cachedLemonImage', cachedImage);
+    };
+} else {
+    // If cached, set the src to the Base64 encoded version
+    lemonImage.src = cachedImage;
+}
+
+// Function to create the raindrop effect
+function createRaindrop() {
+    const drop = document.createElement('img');
+    drop.classList.add('raindrop');
+    
+    // Use the cached Base64 image as the source
+    drop.src = cachedImage;
+    drop.style.left = Math.random() * 100 + 'vw';  // Random horizontal position
+    const size = Math.random() * 20 + 20;  // Random size between 20px and 40px
+    drop.style.width = `${size}px`;
+    drop.style.height = 'auto';  // Keep the aspect ratio
+    drop.style.animationDuration = (Math.random() * 2 + 3) + 's';  // Random fall duration
+    document.body.appendChild(drop);
+
+    // Remove the raindrop after 5 seconds
+    setTimeout(() => {
+        drop.remove();
+    }, 5000);
+}
+
+// Call createRaindrop every second
+setInterval(createRaindrop, 1000);
+
+</script>
+
+
 </body>
 </html>

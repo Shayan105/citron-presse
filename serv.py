@@ -21,6 +21,7 @@ class Serv(BaseHTTPRequestHandler):
     profile = 0
     
     def do_GET(self):
+        print(f"path : {self.path} ")
 
         parsed = self.path.split("/")[1:]
         print(parsed)
@@ -35,6 +36,8 @@ class Serv(BaseHTTPRequestHandler):
             self.send_File_content(BASE + self.path.split('?')[0][1:], SONG_HEADER_TAG, hasHeader=False)
         elif self.path == "/lemon.jpg":
             self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/lemon.jpg", IMAGE_HEADER_TAG, hasHeader=False)
+        elif self.path == "/tinyLemon.png":
+            self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/tinyLemon.png", IMAGE_HEADER_TAG, hasHeader=False)            
         elif self.path == "/favicon-32x32.png":
             self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/favicon-32x32.png", IMAGE_HEADER_TAG, hasHeader=False)
 
