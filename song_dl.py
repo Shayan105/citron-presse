@@ -16,8 +16,9 @@ current_date = datetime.now().strftime("%d-%m-%Y")
 OUTPUT_FILE_NAME = f"{current_date}.wav"  # file name.
 MP3_FILE_NAME = f"{current_date}.mp3"  # MP3 file name.
 SAMPLE_RATE = 48000  # [Hz]. sampling rate.
+BASE = "C:/Users/B/Documents/GitHub/citron-presse/"
 
-DURATION = 5*60
+DURATION = 8*60
 DELTA = 5
 
 def record_audio():
@@ -29,13 +30,13 @@ def record_audio():
         # change "data=data[:, 0]" to "data=data", if you would like to write audio as multiple-channels.
         MP3_FILE_NAME = f"{current_date}.mp3"  # MP3 file name.
 
-        sf.write(file=OUTPUT_FILE_NAME, data=data[:, 0], samplerate=SAMPLE_RATE)
+        sf.write(file=BASE+OUTPUT_FILE_NAME, data=data[:, 0], samplerate=SAMPLE_RATE)
 
     # Convert WAV to MP3 using ffmpeg
-    subprocess.run(['ffmpeg','-y', '-i', OUTPUT_FILE_NAME, MP3_FILE_NAME])
+    subprocess.run(['ffmpeg','-y', '-i', BASE+OUTPUT_FILE_NAME, BASE+MP3_FILE_NAME])
 
     # Delete the WAV file
-    os.remove(OUTPUT_FILE_NAME)
+    os.remove(BASE+OUTPUT_FILE_NAME)
 
 def run_script():
     
@@ -56,17 +57,6 @@ def run_script():
     # Wait for the audio recording to finish
     audio_thread.join()
 
-# Schedule the script to run every day at 17:34 and 17:37 except on Saturdays and Sundays
-def job():
-    if datetime.now().weekday() < 5:  # Monday to Friday are 0-4
-        run_script()
-
-schedule.every().day.at("11:49").do(job)
-
-
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+run_script()
 
 
