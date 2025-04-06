@@ -26,6 +26,7 @@
             width: 100%;
             max-width: 400px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
         .header {
             display: flex;
@@ -37,6 +38,7 @@
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
+            z-index: 10;
         }
         .date-selector {
             background: #D4FF4D;
@@ -49,6 +51,7 @@
             margin-top: 5px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Increased shadow */
             border: 2px solid #B3E044; /* Added stroke */
+            z-index: 10;
         }
         .album-art {
             width: 300px;
@@ -57,6 +60,7 @@
             margin: 0 auto 20px auto;
             border-radius: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
         .controls {
             display: flex;
@@ -80,6 +84,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
         }
         button:active {
             background: #D4FF4D; /* Disable changing color on click */
@@ -360,6 +365,12 @@ function createRaindrop() {
     drop.style.width = `${size}px`;
     drop.style.height = 'auto';  // Keep the aspect ratio
     drop.style.animationDuration = (Math.random() * 2 + 3) + 's';  // Random fall duration
+    drop.style.top = `-${size}px`;  // Start off the screen
+
+    // Apply random rotation
+    const rotation = Math.random() * 360;  // Random rotation from 0deg to 360deg
+    drop.style.transform = `rotate(${rotation}deg)`;  // Random orientation
+
     document.body.appendChild(drop);
 
     // Remove the raindrop after 5 seconds
