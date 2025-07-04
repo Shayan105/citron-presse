@@ -20,7 +20,7 @@ SAMPLE_RATE = 48000  # [Hz]. sampling rate.
 BASE = "C:/Users/B/Documents/GitHub/citron-presse/"
 
 DURATION = 8*60
-DELTA = 5
+DELTA = 1
 
 def record_audio():
     with sc.get_microphone(id=str(sc.default_speaker().name), include_loopback=True).recorder(samplerate=SAMPLE_RATE) as mic:
@@ -38,8 +38,9 @@ def record_audio():
 
     # write the daily transcirpt 
     topic = transcript.generate_daily_topic(BASE+OUTPUT_FILE_NAME)
+    print("Daily Topic: ", topic)
     transcript.store_daily_topic(topic, MP3_FILE_NAME)
-    
+
 
     # Delete the WAV file
     os.remove(BASE+OUTPUT_FILE_NAME)
