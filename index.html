@@ -281,7 +281,7 @@
                         seekBar.value = 0;
                         elapsedTime.textContent = "00:00";
                     
-                        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+                        playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                         // Hide loading spinner
                         loadingSpinner.style.display = 'none';
                         playPauseButton.style.display = 'flex';
@@ -292,6 +292,13 @@
                     musicName.textContent = "Non dispo :(";
                     // Hide loading spinner
                     loadingSpinner.style.display = 'none';
+
+                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+                    audio.pause();
+                    audio.src = ""; // Clear the audio source
+                    
+                    playPauseButton.style.pointerEvents = 'none';
+
                     playPauseButton.style.display = 'flex';
                 });
         }
