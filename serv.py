@@ -85,10 +85,10 @@ class Serv(BaseHTTPRequestHandler):
             self.wfile.write(b"Internal Server Error")
 
     def send_Json_content(self, jsonObj):
-        response = json.dumps(jsonObj)
+        response = json.dumps(jsonObj, ensure_ascii=False)  # <-- disable ASCII escaping
         response_bytes = response.encode('utf-8')
         self.send_response(200)
-        self.send_header('Content-type', JSON_HEADER_TAG)
+        self.send_header('Content-type', 'application/json; charset=utf-8')  # make sure header includes charset
         self.send_header('Content-Length', str(len(response_bytes)))
         self.end_headers()
         self.wfile.write(response_bytes)

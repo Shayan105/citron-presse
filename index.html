@@ -259,6 +259,36 @@
 
             // Send GET request and update audio source with cache-busting
             const cacheBuster = new Date().getTime();
+
+
+            fetch(`${formattedDate}.topic?cb=${cacheBuster}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    let topicName = (text && text.trim() !== "?") ? text.substring(1, text.length - 3) : "Presse citron";
+                    let upperCaseTopicName = capitalizeFirstLetter(topicName);
+                    if (topicName.length==1) {
+                        upperCaseTopicName = "Non dispo :(";
+                    }
+                    musicName.textContent = upperCaseTopicName;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
+
+
+
+
+
+
+
+
+
             fetch(`${formattedDate}.mp3?cb=${cacheBuster}`)
                 .then(response => {
                     if (!response.ok) {
@@ -270,7 +300,7 @@
                     const url = URL.createObjectURL(blob);
                     audio.src = url;
                     audio.load(); // Load the new audio source
-                    musicName.textContent = "Presse citron";
+                    
                     seekBar.value = 0; // Reset the seek bar
                     elapsedTime.textContent = "00:00"; // Reset elapsed time
                     totalTime.textContent = "00:00"; // Reset total time
@@ -301,16 +331,6 @@
 
                     playPauseButton.style.display = 'flex';
                 });
-
-                fetch(`${formattedDate}.topic?cb=${cacheBuster}`)
-                .then(response => {
-                    //print the response to the console
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    console.log(response.json())
-               
-                })
 
         }
 
@@ -344,6 +364,10 @@
 </style>
 
 <script>
+
+function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
 const lemonImage = new Image();
 
 // Check if the image is already in localStorage

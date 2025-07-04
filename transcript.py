@@ -126,4 +126,4 @@ def load_daily_topic(audio_file: str, file_path: str = topic_file_path) -> str:
         topic = generate_daily_topic(audio_file)
     
         store_daily_topic(topic, audio_file, file_path)
-        return topic.capitalize()
+        return topic
