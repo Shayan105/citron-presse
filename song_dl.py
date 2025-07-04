@@ -10,6 +10,7 @@ import schedule
 import time
 import os
 import subprocess
+import transcript
 
 # Generate the output file name with the current date
 current_date = datetime.now().strftime("%d-%m-%Y")
@@ -34,6 +35,11 @@ def record_audio():
 
     # Convert WAV to MP3 using ffmpeg
     subprocess.run(['ffmpeg','-y', '-i', BASE+OUTPUT_FILE_NAME, BASE+MP3_FILE_NAME])
+
+    # write the daily transcirpt 
+    topic = transcript.generate_daily_topic(BASE+OUTPUT_FILE_NAME)
+    transcript.store_daily_topic(topic, MP3_FILE_NAME)
+    
 
     # Delete the WAV file
     os.remove(BASE+OUTPUT_FILE_NAME)
