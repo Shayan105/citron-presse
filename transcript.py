@@ -1,10 +1,10 @@
 import assemblyai as aai
 import requests
+import pickle
+import os 
+topic_file_path = "daily_themes.pkl"
 GEMINI_API_KEY = "AIzaSyAQYaGBFQKw0DF1Ixyzn-wrpXB0_j5r-DE"
-
 aai.settings.api_key = "e2998b1ada764da98d7a0cf4c6d4247f"
-
-
 BASIC_QUERY = "Donne moi les 3 thèmes de la journées proposé dans ce texte. et donne moi le thème selectionné par le joueur, Si tu n'arrive a faire ni l un ni 'autre, juste output '?' sinon output juste et sans rien dire d'autre le thème selectionné "
 
 
@@ -81,7 +81,7 @@ def ask_gemini(prompt, api_key):
 
 
 
-def get_daily_themes(file_path: str) -> str:
+def generate_daily_topic(file_path: str) -> str:
     """
     Retrieves the daily themes from the Gemini API.
 
@@ -93,6 +93,37 @@ def get_daily_themes(file_path: str) -> str:
     return response
 
 
+def store_daily_topic( topic : str , audio_file : str ,file_path: str = topic_file_path,) -> None:
+    try:
+        with open(file_path, 'rb') as file:
+            data = pickle.load(file)
+    except (FileNotFoundError, EOFError):
+        data = {}
+    data[audio_file] = topic
+    with open(file_path, 'wb') as file:
+        pickle.dump(data, file)
+    
+
+def load_daily_topic(audio_file: str, file_path: str = topic_file_path) -> str:
+    if not os.path.exists(audio_file):
+        return ""
 
 
-print(get_daily_themes("03-07-2025.mp3"))
+
+    try:
+        with open(file_path, 'rb') as file:
+            data = pickle.load(file)
+            if(audio_file not in data.keys()):
+                topic = generate_daily_topic(audio_file)
+                store_daily_topic(topic, audio_file, file_path)
+                return topic
+            
+            else :
+                return data[audio_file]
+
+    except (FileNotFoundError, EOFError):
+       
+        topic = generate_daily_topic(audio_file)
+    
+        store_daily_topic(topic, audio_file, file_path)
+        return topic.capitalize()

@@ -297,10 +297,21 @@
                     audio.pause();
                     audio.src = ""; // Clear the audio source
                     
-                    playPauseButton.style.pointerEvents = 'none';
+                    
 
                     playPauseButton.style.display = 'flex';
                 });
+
+                fetch(`${formattedDate}.topic?cb=${cacheBuster}`)
+                .then(response => {
+                    //print the response to the console
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    console.log(response.json())
+               
+                })
+
         }
 
         function formatTime(seconds) {

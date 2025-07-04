@@ -4,6 +4,7 @@ import os
 import json
 import html
 import re
+import transcript
 
 baseFilePath = "index.html"
 
@@ -13,7 +14,6 @@ SONG_HEADER_TAG = "audio/mpeg"
 JSON_HEADER_TAG = "application/json"
 
 BASE =""
-
 
 
 class Serv(BaseHTTPRequestHandler):
@@ -34,6 +34,10 @@ class Serv(BaseHTTPRequestHandler):
             self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/song.mp3", SONG_HEADER_TAG, hasHeader=False)
         elif re.match(r'/\d{2}-\d{2}-\d{4}\.mp3$', self.path.split("?")[0]):
             self.send_File_content(BASE + self.path.split('?')[0][1:], SONG_HEADER_TAG, hasHeader=False)
+        elif re.match(r'/\d{2}-\d{2}-\d{4}\.topic$', self.path.split("?")[0]):
+            topic = transcript.load_daily_topic(self.path.split('?')[0][1:].replace(".topic",".mp3"))
+            print("Topic: ", topic)
+            self.send_Json_content(topic)
         elif self.path == "/lemon.jpg":
             self.send_File_content("C:/Users/B/Documents/GitHub/citron-presse/lemon.jpg", IMAGE_HEADER_TAG, hasHeader=False)
         elif self.path == "/tinyLemon.png":
@@ -80,11 +84,14 @@ class Serv(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b"Internal Server Error")
 
-    def send_Json_content(self, jsonStr):
+    def send_Json_content(self, jsonObj):
+        response = json.dumps(jsonObj)
+        response_bytes = response.encode('utf-8')
         self.send_response(200)
         self.send_header('Content-type', JSON_HEADER_TAG)
+        self.send_header('Content-Length', str(len(response_bytes)))
         self.end_headers()
-        self.wfile.write(bytes(jsonStr, 'utf-8'))
+        self.wfile.write(response_bytes)
 
 
 class ThreadedHTTPServer(socketserver.ThreadingMixIn, HTTPServer):
