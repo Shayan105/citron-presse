@@ -13,7 +13,7 @@ IMAGE_HEADER_TAG = "image/jpeg"
 SONG_HEADER_TAG = "audio/mpeg"
 JSON_HEADER_TAG = "application/json"
 
-BASE =""
+BASE ="C:/Users/B/Documents/GitHub/citron-presse/"
 
 
 class Serv(BaseHTTPRequestHandler):
