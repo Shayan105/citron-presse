@@ -81,14 +81,14 @@ def ask_gemini(prompt, api_key):
 
 
 
-def generate_daily_topic(file_path: str) -> str:
+def generate_daily_topic(file_path: str, BASE = "") -> str:
     """
     Retrieves the daily themes from the Gemini API.
 
     Returns:
         str: The daily themes as a string, or "NULL" if an error occurs.
     """
-    transcript = transcirbe_audio(file_path)
+    transcript = transcirbe_audio(BASE+ file_path)
     response = ask_gemini(BASIC_QUERY+ transcript, GEMINI_API_KEY)
     return response
 
