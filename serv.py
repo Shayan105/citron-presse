@@ -35,7 +35,7 @@ class Serv(BaseHTTPRequestHandler):
         elif re.match(r'/\d{2}-\d{2}-\d{4}\.mp3$', self.path.split("?")[0]):
             self.send_File_content(BASE + self.path.split('?')[0][1:], SONG_HEADER_TAG, hasHeader=False)
         elif re.match(r'/\d{2}-\d{2}-\d{4}\.topic$', self.path.split("?")[0]):
-            topic = transcript.load_daily_topic(self.path.split('?')[0][1:].replace(".topic",".mp3"))
+            topic = transcript.load_daily_topic(self.path.split('?')[0][1:].replace(".topic",".mp3"), BASE=BASE)
             print("Topic: ", topic)
             self.send_Json_content(topic)
         elif self.path == "/lemon.jpg":
