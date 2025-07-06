@@ -37,9 +37,9 @@ def record_audio():
     subprocess.run(['ffmpeg','-y', '-i', BASE+OUTPUT_FILE_NAME, BASE+MP3_FILE_NAME])
 
     # write the daily transcirpt 
-    topic = transcript.generate_daily_topic(BASE+OUTPUT_FILE_NAME)
+    topic = transcript.generate_daily_topic(OUTPUT_FILE_NAME, BASE=BASE)
     print("Daily Topic: ", topic)
-    transcript.store_daily_topic(topic, MP3_FILE_NAME)
+    transcript.store_daily_topic(topic, MP3_FILE_NAME, BASE=BASE)
 
 
     # Delete the WAV file

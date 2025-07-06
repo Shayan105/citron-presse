@@ -93,9 +93,9 @@ def generate_daily_topic(file_path: str) -> str:
     return response
 
 
-def store_daily_topic( topic : str , audio_file : str ,file_path: str = topic_file_path,) -> None:
+def store_daily_topic( topic : str , audio_file : str ,file_path: str = topic_file_path,BASE = "") -> None:
     try:
-        with open(file_path, 'rb') as file:
+        with open(BASE+file_path, 'rb') as file:
             data = pickle.load(file)
     except (FileNotFoundError, EOFError):
         data = {}
@@ -104,14 +104,14 @@ def store_daily_topic( topic : str , audio_file : str ,file_path: str = topic_fi
         pickle.dump(data, file)
     
 
-def load_daily_topic(audio_file: str, file_path: str = topic_file_path) -> str:
-    if not os.path.exists(audio_file):
+def load_daily_topic(audio_file: str, file_path: str = topic_file_path, BASE ="") -> str:
+    if not os.path.exists(BASE+audio_file):
         return ""
 
 
 
     try:
-        with open(file_path, 'rb') as file:
+        with open(BASE+file_path, 'rb') as file:
             data = pickle.load(file)
             if(audio_file not in data.keys()):
                 topic = generate_daily_topic(audio_file)
@@ -123,7 +123,4 @@ def load_daily_topic(audio_file: str, file_path: str = topic_file_path) -> str:
 
     except (FileNotFoundError, EOFError):
        
-        topic = generate_daily_topic(audio_file)
-    
-        store_daily_topic(topic, audio_file, file_path)
-        return topic
+        return ""
